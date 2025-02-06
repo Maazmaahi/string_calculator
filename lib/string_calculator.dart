@@ -12,7 +12,14 @@ class StringCalculator {
     }
 
     List<String> parts = numbers.replaceAll('\n', delimiter).split(delimiter);
-
-    return parts.map(int.parse).reduce((a, b) => a + b);
+    int sum = 0;
+    for (String num in parts) {
+      int value = int.parse(num);
+      if (value < 0) {
+        throw Exception("negative numbers not allowed $value");
+      }
+      sum += value;
+    }
+    return sum;
   }
 }
