@@ -46,5 +46,9 @@ void main() {
     test('should ignore numbers greater than 1000', () {
       expect(StringCalculator().add("2,1001"), equals(2));
     });
+
+    test('should handle custom delimiter any length', () {
+      expect(StringCalculator().add("//[***]\n1***2***3"), equals(6));
+    });
   });
 }
