@@ -126,10 +126,258 @@ The following features have been implemented, in accordance with the kata requir
     }
     ```
 
-*   **Negative Numbers:** Calling `add` with a negative number throws an exception with a clear message indicating the negative number(s).
+*   **Negative Single Numbers:** Calling `add` with a negative number throws an exception with a clear message indicating the negative number(s).
+
+    ```dart
+    // Test
+    test('should throw exception for single negative numbers', () {
+      expect(
+          () => StringCalculator().add("-1,2"),
+          throwsA(predicate((e) =>
+              e is Exception &&
+              e.toString() == "Exception: negative numbers not allowed -1")));
+    });
+
+    // Implementation (Refactored)
+    int add(String numbers) {
+      if (numbers.isEmpty) return 0;
+      String delimiter = ',';
+      if (numbers.startsWith("//")) {
+        int delimiterEnd = numbers.indexOf('\n');
+        delimiter = numbers.substring(2, delimiterEnd);
+        numbers = numbers.substring(delimiterEnd + 1);
+      }
+      List<String> parts = numbers.replaceAll('\n', delimiter).split(delimiter);
+      int sum = 0;
+      for (String num in parts) {
+        int value = int.parse(num);
+        if (value < 0) {
+            throw Exception("negative numbers not allowed $value");
+        }
+        sum += value;
+      }
+      return sum;
+    }
+    ```
+
+*   **Negative Multiple Numbers:** Calling `add` with a negative number throws an exception with a clear message indicating the negative number(s).
+
+    ```dart
+    // Test
+    test('should throw exception for multiple negative numbers', () {
+      expect(
+          () => StringCalculator().add("-1,-2,3"),
+          throwsA(predicate((e) =>
+              e is Exception &&
+              e.toString() == "Exception: negative numbers not allowed -1,-2")));
+    });
+
+    // Implementation (Refactored)
+    int add(String numbers) {
+      if (numbers.isEmpty) return 0;
+      String delimiter = ',';
+      if (numbers.startsWith("//")) {
+        int delimiterEnd = numbers.indexOf('\n');
+        delimiter = numbers.substring(2, delimiterEnd);
+        numbers = numbers.substring(delimiterEnd + 1);
+      }
+      List<String> parts = numbers.replaceAll('\n', delimiter).split(delimiter);
+      int sum = 0;
+      List<int> negatives = [];
+      for (String num in parts) {
+        int value = int.parse(num);
+        if (value < 0) {
+            negatives.add(value);
+        }
+        sum += value;
+      }
+
+      if (negatives.isNotEmpty) {
+        throw Exception("negative numbers not allowed ${negatives.join(',')}");
+      }
+
+      return sum;
+    }
+    ```
+
 *   **Numbers > 1000:** Numbers greater than 1000 are ignored in the calculation.
-*   **Long Delimiters:** Delimiters can be of any length (e.g., `//[***]\n1***2***3`).
+
+    ```dart
+    // Test
+    test('should ignore numbers greater than 1000', () {
+      expect(StringCalculator().add("2,1001"), equals(2));
+    });
+
+    // Implementation (Refactored)
+    int add(String numbers) {
+      if (numbers.isEmpty) return 0;
+      String delimiter = ',';
+      if (numbers.startsWith("//")) {
+        int delimiterEnd = numbers.indexOf('\n');
+        delimiter = numbers.substring(2, delimiterEnd);
+        numbers = numbers.substring(delimiterEnd + 1);
+      }
+      List<String> parts = numbers.replaceAll('\n', delimiter).split(delimiter);
+      int sum = 0;
+      List<int> negatives = [];
+      for (String num in parts) {
+        int value = int.parse(num);
+        if (value < 0) {
+            negatives.add(value);
+        }
+        if (value <= 1000) {
+            sum += value;
+        }
+      }
+
+      if (negatives.isNotEmpty) {
+        throw Exception("negative numbers not allowed ${negatives.join(',')}");
+      }
+
+      return sum;
+    }
+    ```
+
+*   **Custom Delimiter Any Length:** Delimiters can be of any length (e.g., `//[***]\n1***2***3`).
+
+    ```dart
+    // Test
+    test('should handle custom delimiter any length', () {
+      expect(StringCalculator().add("//[***]\n1***2***3"), equals(6));
+    });
+
+    // Implementation (Refactored)
+    int add(String numbers) {
+      if (numbers.isEmpty) return 0;
+      String delimiter = ',';
+      if (numbers.startsWith("//")) {
+        int delimiterEnd = numbers.indexOf('\n');
+        String delimiterStr = numbers.substring(2, delimiterEnd);
+
+        //Extract delimiters from string like "[***][%]"
+        List<String> delimiters = delimiterStr.replaceAll('[', '').split(']');
+        delimiters.removeWhere((element) => element.isEmpty);
+
+        numbers = numbers.substring(delimiterEnd + 1);
+
+        for (String delimiter in delimiters) {
+            numbers = numbers.replaceAll(delimiter, ',');
+        }
+      }
+      List<String> parts = numbers.replaceAll('\n', delimiter).split(delimiter);
+      int sum = 0;
+      List<int> negatives = [];
+      for (String num in parts) {
+        int value = int.parse(num);
+        if (value < 0) {
+            negatives.add(value);
+        }
+        if (value <= 1000) {
+            sum += value;
+        }
+      }
+
+      if (negatives.isNotEmpty) {
+        throw Exception("negative numbers not allowed ${negatives.join(',')}");
+      }
+
+      return sum;
+    }
+    ```
+
 *   **Multiple Delimiters:** The input can specify multiple delimiters using the format `//[delim1][delim2]\n[numbers…]`.  This includes handling combinations of long and short delimiters.
+
+    ```dart
+    // Test
+    test('should handle multiple delimiters', () {
+      expect(StringCalculator().add("//[*][%]\n1*2%3"), equals(6));
+    });
+
+    // Implementation (Refactored)
+    int add(String numbers) {
+      if (numbers.isEmpty) return 0;
+      String delimiter = ',';
+      if (numbers.startsWith("//")) {
+        int delimiterEnd = numbers.indexOf('\n');
+        String delimiterStr = numbers.substring(2, delimiterEnd);
+
+        //Extract delimiters from string like "[***][%]"
+        List<String> delimiters = delimiterStr.replaceAll('[', '').split(']');
+        delimiters.removeWhere((element) => element.isEmpty);
+
+        numbers = numbers.substring(delimiterEnd + 1);
+
+        for (String delimiter in delimiters) {
+            numbers = numbers.replaceAll(delimiter, ',');
+        }
+      }
+      List<String> parts = numbers.replaceAll('\n', delimiter).split(delimiter);
+      int sum = 0;
+      List<int> negatives = [];
+      for (String num in parts) {
+        int value = int.parse(num);
+        if (value < 0) {
+            negatives.add(value);
+        }
+        if (value <= 1000) {
+            sum += value;
+        }
+      }
+
+      if (negatives.isNotEmpty) {
+        throw Exception("negative numbers not allowed ${negatives.join(',')}");
+      }
+
+      return sum;
+    }
+    ```
+
+*   **Long Multiple Delimiters:** The input can specify multiple delimiters using the format `//[delim1][delim2]\n[numbers…]`.  This includes handling combinations of long and short delimiters.
+
+```dart
+    // Test
+    test('should handle multiple long delimiters', () {
+      expect(StringCalculator().add("//[***][%%%]\n1***2%%%3"), equals(6));
+    });
+
+    // Implementation (Refactored)
+    int add(String numbers) {
+      if (numbers.isEmpty) return 0;
+      String delimiter = ',';
+      if (numbers.startsWith("//")) {
+        int delimiterEnd = numbers.indexOf('\n');
+        String delimiterStr = numbers.substring(2, delimiterEnd);
+
+        //Extract delimiters from string like "[***][%]"
+        List<String> delimiters = delimiterStr.replaceAll('[', '').split(']');
+        delimiters.removeWhere((element) => element.isEmpty);
+
+        numbers = numbers.substring(delimiterEnd + 1);
+
+        for (String delimiter in delimiters) {
+            numbers = numbers.replaceAll(delimiter, ',');
+        }
+      }
+      List<String> parts = numbers.replaceAll('\n', delimiter).split(delimiter);
+      int sum = 0;
+      List<int> negatives = [];
+      for (String num in parts) {
+        int value = int.parse(num);
+        if (value < 0) {
+            negatives.add(value);
+        }
+        if (value <= 1000) {
+            sum += value;
+        }
+      }
+
+      if (negatives.isNotEmpty) {
+        throw Exception("negative numbers not allowed ${negatives.join(',')}");
+      }
+
+      return sum;
+    }
+    ```
 
 ## Code Structure
 
