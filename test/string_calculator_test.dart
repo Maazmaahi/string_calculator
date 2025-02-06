@@ -34,5 +34,13 @@ void main() {
               e is Exception &&
               e.toString() == "Exception: negative numbers not allowed -1")));
     });
+
+    test('should throw exception for multiple negative numbers', () {
+      expect(
+          () => StringCalculator().add("-1,-2,3"),
+          throwsA(predicate((e) =>
+              e is Exception &&
+              e.toString() == "Exception: negative numbers not allowed -1,-2")));
+    });
   });
 }
