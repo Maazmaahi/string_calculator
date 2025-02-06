@@ -50,5 +50,9 @@ void main() {
     test('should handle custom delimiter any length', () {
       expect(StringCalculator().add("//[***]\n1***2***3"), equals(6));
     });
+
+    test('should handle multiple delimiters', () {
+      expect(StringCalculator().add("//[*][%]\n1*2%3"), equals(6));
+    });
   });
 }
