@@ -7,8 +7,17 @@ class StringCalculator {
     String delimiter = ',';
     if (numbers.startsWith("//")) {
       int delimiterEnd = numbers.indexOf('\n');
-      delimiter = numbers.substring(2, delimiterEnd);
+      String delimiterStr = numbers.substring(2, delimiterEnd);
+
+      //Extract delimiters from string like "[***][%]"
+      List<String> delimiters = delimiterStr.replaceAll('[', '').split(']');
+      delimiters.removeWhere((element) => element.isEmpty);
+
       numbers = numbers.substring(delimiterEnd + 1);
+
+      for (String delimiter in delimiters) {
+        numbers = numbers.replaceAll(delimiter, ',');
+      }
     }
 
     List<String> parts = numbers.replaceAll('\n', delimiter).split(delimiter);
