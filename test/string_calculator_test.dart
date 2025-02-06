@@ -22,5 +22,9 @@ void main() {
     test('new lines between numbers', () {
       expect(StringCalculator().add('1\n2'), 3);
     });
+
+    test('custom delimiter', () {
+      expect(StringCalculator().add('//;\n1;2'), 3);
+    });
   });
 }
