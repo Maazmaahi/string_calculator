@@ -10,5 +10,9 @@ void main() {
     test('single number returns the number', () {
       expect(StringCalculator().add('1'), 1);
     });
+
+    test('two numbers returns the sum', () {
+      expect(StringCalculator().add('1,2'), 3);
+    });
   });
 }
