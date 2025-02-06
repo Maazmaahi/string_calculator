@@ -42,5 +42,9 @@ void main() {
               e is Exception &&
               e.toString() == "Exception: negative numbers not allowed -1,-2")));
     });
+
+    test('should ignore numbers greater than 1000', () {
+      expect(StringCalculator().add("2,1001"), equals(2));
+    });
   });
 }
