@@ -14,5 +14,9 @@ void main() {
     test('two numbers returns the sum', () {
       expect(StringCalculator().add('1,2'), 3);
     });
+
+    test('unKnown amount of numbers returns the sum', () {
+      expect(StringCalculator().add('1,2,3,4'), 10);
+    });
   });
 }
