@@ -13,13 +13,19 @@ class StringCalculator {
 
     List<String> parts = numbers.replaceAll('\n', delimiter).split(delimiter);
     int sum = 0;
+    List<int> negatives = [];
     for (String num in parts) {
       int value = int.parse(num);
       if (value < 0) {
-        throw Exception("negative numbers not allowed $value");
+        negatives.add(value);
       }
       sum += value;
     }
+
+    if (negatives.isNotEmpty) {
+      throw Exception("negative numbers not allowed ${negatives.join(',')}");
+    }
+
     return sum;
   }
 }
