@@ -4,6 +4,11 @@ class StringCalculator {
       return 0;
     }
 
-    return int.parse(numbers);
+    final parts = numbers.split(',');
+    int sum = 0;
+    if (parts.length == 2) {
+      sum += int.parse(parts.last);
+    }
+    return sum += int.parse(parts.first);
   }
 }
