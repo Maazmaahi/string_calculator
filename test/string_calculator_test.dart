@@ -18,5 +18,9 @@ void main() {
     test('unKnown amount of numbers returns the sum', () {
       expect(StringCalculator().add('1,2,3,4'), 10);
     });
+
+    test('new lines between numbers', () {
+      expect(StringCalculator().add('1\n2'), 3);
+    });
   });
 }
